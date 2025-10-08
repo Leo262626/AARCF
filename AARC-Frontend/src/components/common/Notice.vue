@@ -12,9 +12,9 @@ onMounted(()=>{
         if(props.type=='info'){
             title.value = "⚠ 注意"
         }else if(props.type=='warn'){
-            title.value = "⚠ 注意"
-        }else if(props.type=='danger'){
             title.value = "⚠ 警告"
+        }else if(props.type=='danger'){
+            title.value = "⚠ 危险"
         }
     }else{
         title.value = props.title;
