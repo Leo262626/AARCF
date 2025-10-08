@@ -14,6 +14,8 @@ import { SaveDto } from '@/app/com/apiGenerated';
 import { WithIntroShow } from '@/utils/type/WithIntroShow';
 import { useUserInfoStore } from '@/app/globalStores/userInfo';
 import { useEnteredCanvasFromStore } from '@/app/globalStores/enteredCanvasFrom';
+import Switch from '@/components/common/Switch.vue';
+import { UserType } from '@/app/com/apiGenerated';
 
 const saveList = ref<WithIntroShow<SaveDto>[]>()
 const api = useApiStore();
@@ -230,6 +232,22 @@ onMounted(async()=>{
                 <textarea v-model="editingSave.intro" placeholder="最多256字符" rows="5"></textarea>
             </td>
         </tr>
+
+        <!-- 新增：是否公开 开关（仅当是已转正用户且不是创建新存档时显示） -->
+        <tr v-if="!isCreatingSave && (userInfoStore.userInfo.type ?? 0) > UserType.Tourist">
+            <td>是否公开</td>
+            <td>
+                <Switch
+                    :initial="editingSave.isVisible ? 'right' : 'left'"
+                    @right="editingSave.isVisible = true"
+                    @left="editingSave.isVisible = false"
+                    />
+                <div style="font-size:12px;color:#666;margin-top:6px;">
+                    开启后，非游客用户可以在公共列表看到该存档
+                </div>
+            </td>
+        </tr>
+
         <tr>
             <td colspan="2">
                 <button @click="done">{{ isCreatingSave ? '创建存档':'保存更改' }}</button>
