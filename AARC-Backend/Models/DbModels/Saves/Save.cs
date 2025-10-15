@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace AARC.Models.DbModels.Saves
 {
@@ -18,6 +18,10 @@ namespace AARC.Models.DbModels.Saves
         public byte Priority { get; set; }
         public DateTime LastActive { get; set; }
         public bool Deleted { get; set; }
+
+        // 新增：存储是否公开（对外可见）
+        // 默认为 true，兼容老数据（需要在 DB 端添加列并设置默认值）
+        public bool IsVisible { get; set; } = true;
 
         public const int nameMaxLength = 64;
         public const int versionMaxLength = 32;
