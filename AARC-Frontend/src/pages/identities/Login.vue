@@ -63,6 +63,9 @@ const leftTimeDisplay = computed<string>(()=>{
     }
     const hours = userInfo.value.leftHours ?? 0;
     if(hours>72){
+        if(hours>8761){
+            return Math.round(hours/365)+'年';
+        }
         return Math.round(hours/24)+'天';
     }
     return hours+'小时';
@@ -107,6 +110,7 @@ onMounted(async()=>{
                 <option :value="168">7天</option>
                 <option :value="720">30天</option>
                 <option :value="8760">365天</option>
+                <option :value="87600">10年（永久）</option>
             </select>
         </div>
         <div v-show="setExpire" style="color:red; text-align: center;">仅在自己的设备上选择较长时间</div>
