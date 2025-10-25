@@ -4,7 +4,7 @@ import { onMounted, onBeforeUnmount, ref } from 'vue';
 const rightDefault = -200;
 const height = 70;
 const top = 40;
-export type boxTypes = "success"|"failed"|"warning"|"info"
+export type boxTypes = "success"|"failed"|"warning"|"info"|"newverse"
 export type popDelegate = (msg:string,type:boxTypes)=>void;
 
 interface msgBox {
@@ -103,5 +103,8 @@ defineExpose({ show })
 .warning{
     background-color: rgb(255, 132, 0);
     color:black;
+}
+.newverse{
+    background-color: #ac54d7
 }
 </style>

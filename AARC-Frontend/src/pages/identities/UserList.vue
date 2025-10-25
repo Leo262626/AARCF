@@ -151,9 +151,9 @@ onMounted(async()=>{
                     查看
                 </button>
             </RouterLink>
-            <button @click="startEditing(u)" v-if="userInfo.id === u.id || userInfoStore.isAdmin" class="lite">
-                编辑
-            </button>
+            <p>
+                编辑（已迁移至用户的Children选项）
+            </p>
         </td>
     </tr>
     <tr>

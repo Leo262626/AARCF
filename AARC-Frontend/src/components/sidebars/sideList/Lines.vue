@@ -88,7 +88,7 @@ onUnmounted(()=>{
                         <ColorPickerForLine v-else ref="pickers" :line="l" :z-index="idx"></ColorPickerForLine>
                     </div>
                     <div v-else class="sqrBtn" :style="{backgroundColor: l.color, cursor:'default'}"
-                        @click="pop?.show('支线颜色跟随主线，不可单独调整', 'info')">
+                        @click="pop?.show('支线颜色单独调整<br/>敬请期待', 'info')">
                     </div>
                 </template>
                 <LineItemBtns :mouse-down-line-arrange="mouseDownLineArrange" :del-line-start="delLineStart"
