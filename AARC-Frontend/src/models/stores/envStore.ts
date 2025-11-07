@@ -105,7 +105,6 @@ export const useEnvStore = defineStore('env', ()=>{
         cursorPos.value = undefined
         movedPoint.value = false
         movedTextTag.value = false
-        setOpsPos(false)
     }
     function endEveryEditing(exceptName?:boolean){
         //结束editing状态，将edited重置回false
@@ -535,9 +534,23 @@ export const useEnvStore = defineStore('env', ()=>{
                 movedPoint.value = true
             }
         }
+        const toggleIsolate = ()=>{
+            if(!pt) return
+            pt.isolated = !pt.isolated
+            movedPoint.value = true
+            // 重新计算聚类，确保UI立刻反映
+            staClusterStore.updateClustersBecauseOf(pt)
+            rerender.value()
+        }
+
         let firstCol:OpsBtn[] = [{
                 cb:swDirCb,
                 text:'旋转'
+            },{
+                // 主文字始终显示“独立”，副文字用于提示用法--By Oxygen
+                cb:()=>toggleIsolate(),
+                text: '独立',
+                textSub: '改变独立性'
             },{
                 cb:rmPtCb,
                 text:'移除'
@@ -604,7 +617,6 @@ export const useEnvStore = defineStore('env', ()=>{
         }
         const createTagForLine = ()=>{
             if(activeLine.value?.id){
-                setOpsPos(false)
                 const lineId = activeLine.value.id
                 activeLine.value = undefined
                 createTextTag(lineId)

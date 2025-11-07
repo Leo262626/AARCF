@@ -33,6 +33,8 @@ export interface ControlPoint{
     nameS?:string
     nameP?:Coord
     nameSize?:number
+    // 如果为 true，则这个站点被标记为独立，不会与附近站点合并为换乘站（除非坐标完全重合（不然取消哪个啊））--By Oxygen
+    isolated?: boolean
 }
 
 export enum ControlPointLinkType{
