@@ -32,7 +32,7 @@ const exportFailed = ref<boolean>(false)
 const exportLocalConfig = useExportLocalConfigStore()
 const { fileNameStyle, pixelRestrict, pixelRestrictMode, ads } = storeToRefs(exportLocalConfig)
 
-async function downloadMainCvsAsPng() {
+async function downloadMainCvsAsPng(noBackground:boolean = false) {
     if(exporting.value)
         return
     exported.value = false
@@ -51,7 +51,10 @@ async function downloadMainCvsAsPng() {
             suppressRenderedCallback:true,
             forExport:true,
             ctx,
-            withAds: ads.value
+            // if requesting no background, disable watermark and ads
+            withAds: noBackground ? 'no' : ads.value,
+            disableWatermark: noBackground,
+            transparentBackground: noBackground
         }
         mainCvsDispatcher.renderMainCvs(mainRenderingOptions)
 
@@ -82,6 +85,7 @@ async function downloadMainCvsAsPng() {
     }
     exporting.value = false
 }
+// removed separate no-background function; use downloadMainCvsAsPng(true)
 let activeUrl:string|undefined = undefined;
 async function downloadMiniatureCvsAsPng() {
     if(exporting.value)
@@ -223,7 +227,10 @@ function explainPixelMode(){
                     <option :value="'more'">详细</option>
                 </select>
             </div>
-            <button @click="downloadMainCvsAsPng" class="ok">导出为图片</button>
+            <button @click="() => downloadMainCvsAsPng()" class="ok">导出为图片</button>
+            <!--修改部分-->
+            <button @click="() => downloadMainCvsAsPng(true)" class="ok">导出为透明背景图片</button>
+            <!--修改部分结束-->
             <button @click="downloadMiniatureCvsAsPng" class="minor">导出为缩略图</button>
             <div v-show="exported" class="note">
                 若点击导出后没有开始下载<br />请尝试<a :id="downloadAnchorElementId" class="downloadAnchor">点击此处</a>

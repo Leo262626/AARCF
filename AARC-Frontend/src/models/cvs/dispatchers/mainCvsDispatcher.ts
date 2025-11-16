@@ -28,10 +28,14 @@ export interface MainCvsRenderingOptions{
     suppressRenderedCallback?:boolean
     /** 导出式渲染 */
     forExport?:boolean
+    /** 导出时是否使用透明背景（跳过填充背景色），修改部分 */
+    transparentBackground?: boolean
     /** 指定画布上下文 */
     ctx?: CvsContext
     /** 广告水印 (no/less/more) */
     withAds?: AdsRenderType
+    /** 是否禁用水印（无论 forExport），修改部分 */
+    disableWatermark?: boolean
     /** 导出强调 */
     // emphasis?: {
     //     /** 目标线路或线路组id */
@@ -68,10 +72,13 @@ export const useMainCvsDispatcher = defineStore('mainCvsDispatcher', ()=>{
         const ctx = options.ctx || getCtx();
         const { changedLines, movedStaNames, suppressRenderedCallback, forExport } = options
         if(forExport){
-            ctx.fillStyle = cs.config.bgColor
-            ctx.fillTotal()
+            if (!options.transparentBackground)
+            {
+                ctx.fillStyle = cs.config.bgColor
+                ctx.fillTotal()
+            }
         }
-        if(!visitorMode.value)
+        if(!visitorMode.value && !options.disableWatermark)
             renderWatermark(ctx, 'beforeMain', forExport)
 
         const creatingLink = pointLinkStore.isCreating
@@ -102,7 +109,7 @@ export const useMainCvsDispatcher = defineStore('mainCvsDispatcher', ()=>{
         if(options.withAds){
             renderAds(ctx, options.withAds)
         }
-        if(!visitorMode.value)
+        if(!visitorMode.value && !options.disableWatermark)
             renderWatermark(ctx, 'afterMain', forExport)
         isRendering.value = false
         if(logRendering){
