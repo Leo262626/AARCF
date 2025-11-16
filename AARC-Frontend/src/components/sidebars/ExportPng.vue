@@ -82,6 +82,65 @@ async function downloadMainCvsAsPng() {
     }
     exporting.value = false
 }
+//修改部分
+async function downloadMainCvsAsNoBackgroundPng() {
+    if(exporting.value)
+        return
+    exported.value = false
+    exporting.value = true
+    exportFailed.value = false
+
+    const fileName = await getExportPngFileName()
+    if(fileName){
+        const { scale, cvsWidth, cvsHeight } = getExportRenderSize()
+        const cvs = new OffscreenCanvas(cvsWidth, cvsHeight)
+        const ctx2d = cvs.getContext('2d')!
+        // Ensure canvas has alpha by default; OffscreenCanvas in most browsers supports alpha
+        const ctx = new CvsContext([new CvsBlock(scale, 0, 0, ctx2d)])
+        const mainRenderingOptions:MainCvsRenderingOptions = {
+            changedLines:[],
+            movedStaNames:[],
+            suppressRenderedCallback:true,
+            forExport:true,
+            ctx,
+            // disable ads and watermark for transparent export
+            withAds: 'no',
+            disableWatermark: true,
+            transparentBackground: true
+        }
+
+        // render without background and without watermark/ads
+        mainCvsDispatcher.renderMainCvs(mainRenderingOptions)
+
+        let pngDataUrl
+        try{
+            pngDataUrl = await cvsToDataUrl(cvs)
+        }
+        catch{
+            pop?.show('导出失败\n请查看指引', 'failed')
+            exporting.value = false
+            exportFailed.value = true
+            return
+        }
+        if(!pngDataUrl){
+            exporting.value = false
+            return
+        }
+        var link = getDownloadAnchor()
+        if(link && 'href' in link){
+            exported.value = true
+            link.href = pngDataUrl;
+            if('download' in link)
+                link.download = fileName
+            link.click();
+        }
+
+        mainRenderingOptions.forExport = false
+        mainCvsDispatcher.renderMainCvs(mainRenderingOptions)
+    }
+    exporting.value = false
+}
+//修改部分结束
 let activeUrl:string|undefined = undefined;
 async function downloadMiniatureCvsAsPng() {
     if(exporting.value)
@@ -224,6 +283,9 @@ function explainPixelMode(){
                 </select>
             </div>
             <button @click="downloadMainCvsAsPng" class="ok">导出为图片</button>
+            <!--修改部分-->>
+            <button @click="downloadMainCvsAsNoBackgroundPng" class="ok">导出为透明背景图片</button>
+            <!--修改部分结束-->
             <button @click="downloadMiniatureCvsAsPng" class="minor">导出为缩略图</button>
             <div v-show="exported" class="note">
                 若点击导出后没有开始下载<br />请尝试<a :id="downloadAnchorElementId" class="downloadAnchor">点击此处</a>
