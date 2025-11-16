@@ -148,6 +148,10 @@ export const useStaClusterStore = defineStore('staCluster', ()=>{
     }
 
     function ptClinging(a:ControlPoint, b:ControlPoint):boolean{
+        // 如果任一站点被标记为 isolated，则只有在两点完全重合时才算作仍能合并为换乘，否则是为独立的车站--By Oxygen
+        if(a.isolated || b.isolated){
+            return a.pos[0] === b.pos[0] && a.pos[1] === b.pos[1]
+        }
         const sizeA = saveStore.getLinesDecidedPtSize(a.id)
         const sizeB = saveStore.getLinesDecidedPtSize(b.id)
         const distMut = (sizeA + sizeB)/2
